@@ -9,10 +9,10 @@ class Minimax:
     def __init__(self):
         self.max = False
         self.ab = False
+        self.range = []
         self.input_graph = {}
         self.tree_depth = 0
         self.leaf_nodes = {}
-
 
     def add_arguements(self):
         parser = argparse.ArgumentParser()
@@ -33,11 +33,14 @@ class Minimax:
             dest="loglevel",
             const=logging.INFO,
         )
-        parser.add_argument("-ab", help="Enable Alpha Beta Pruning")
+        parser.add_argument(
+            "-ab", help="Enable Alpha Beta Pruning", action="store_true"
+        )
+        parser.add_argument("-range", help="Range of values for nodes", type=int)
         parser.add_argument("max", help="Max for the root node")
-        # parser.add_argument("min", help="Min for the root node")
-        args = parser.parse_args(sys.argv)
+        args = parser.parse_args()
         logging.basicConfig(level=args.loglevel)
+        return args
 
     def get_input_data(self):
         parse_data = ParseData()
@@ -45,103 +48,106 @@ class Minimax:
         print("input_data: ", input_data)
         self.input_graph = input_data["input_graph"]
         self.tree_depth = input_data["tree_depth"]
-        self.leaf_nodes = input_data['leaf_nodes']
+        self.leaf_nodes = input_data["leaf_nodes"]
 
     def read_arguements(self):
-        print('arguements: ', sys.argv)
-        if "-ab" in sys.argv:
-            self.ab = True
-
-        if "max" in sys.argv:
+        args = self.add_arguements()
+        print('max: ', args.max, args.ab)
+        if args.range:
+            self.range = [-args.range, args.range]
+        self.ab = args.ab
+        if args.max == 'max':
             self.max = True
 
-    # TODO:: pass the root here correctly rather than assuming its 'a'
-    def get_chosen_node(self, result, root='a'):
-        parent_chosen_node = None
-        child_chosen_node = None
-        for key, values in self.input_graph.items():
-            if result in values:
-                child_chosen_node = key
-                break
-
-        for key, values in self.input_graph.items():
-            if child_chosen_node in values:
-                parent_chosen_node = key
-
-        if parent_chosen_node == root:
-            return child_chosen_node
-        return parent_chosen_node
-
     def start_minimax(self):
-        result = self.dfs(
-            node="a",
-            depth=self.tree_depth,
+        parse_data = ParseData()
+        root_data_obj = parse_data.get_root(self.input_graph)
+        if root_data_obj["message"] is not None:
+            return logging.info(root_data_obj["message"])
+        root = root_data_obj["root"]
+
+        nodes_data_obj = parse_data.check_node_failure(
+            self.input_graph, self.leaf_nodes
+        )
+        if nodes_data_obj["message"] is not None:
+            logging.info(nodes_data_obj["message"])
+
+        leaves_data_obj = parse_data.check_leaf_failure(
+            self.input_graph, self.leaf_nodes
+        )
+        if leaves_data_obj["message"] is not None:
+            logging.info(leaves_data_obj["message"])
+
+        min_max_result = self.dfs(
+            node=root,
             is_max_player=self.max,
             alpha=float("-inf"),
             beta=float("inf"),
         )
-        chosen_node = self.get_chosen_node(result)
+        return f"minimax: {min_max_result}"
 
-        if self.max is True:
-            logging.info("max(a) chooses {} for {}".format(chosen_node, result))
-        else:
-            logging.info("min(a) chooses {} for {}".format(chosen_node, result))
+    def dfs(self, node, is_max_player, alpha, beta):
+        if self.is_leaf(node):
+            if self.range and (node < self.range[0] or node > self.range[1]):
+                return float('-inf')
+            return node
 
-    def dfs(self, node, depth, is_max_player, alpha, beta):
-        if depth == 0 or self.is_leaf(node):
-            values = [int(value) for value in self.input_graph[node]]
-            print("chosen node1: ", node)
-            if is_max_player:
-                value = max(values)
-                for node, values in self.input_graph.items():
-
-                for leaf_node, node_value in self.leaf_nodes.items():
-                    if value == node_value:
-                        logging.info('max({}) chooses {} for {}'.format(node, leaf_node, node_value))
-                        break
-            else:
-                value = min(values)
-                for leaf_node, node_value in self.leaf_nodes.items():
-                    if value == node_value:
-                        logging.info('min({}) chooses {} for {}'.format(node, leaf_node, node_value))
-                        break
-
-            return value
-
-        print('is_ab: ', self.ab)
         if is_max_player:
             max_value = float("-inf")
+            chosen_child = None
+
             for child in self.input_graph[node]:
-                max_value = max(
-                    max_value, self.dfs(child, depth - 1, False, alpha, beta)
-                )
+                if child in self.leaf_nodes:
+                    score = self.dfs(
+                        self.leaf_nodes[child], False, alpha, beta
+                    )
+                else:
+                    score = self.dfs(child, False, alpha, beta)
+                if score > max_value:
+                    max_value = score
+                    chosen_child = child
+
                 if self.ab:
-                    alpha = max(max_value, alpha)
+                    alpha = max(score, alpha)
                     if beta <= alpha:
-                        logging.info('alpha pruning: {} for the node: {}'.format(max_value, node))
                         break
+
+            if self.ab and beta > alpha:
+                logging.info(f" max({node}) chooses {chosen_child} for {max_value}")
+
+            if self.ab is False:
+                logging.info(f" max({node}) chooses {chosen_child} for {max_value}")
             return max_value
         else:
             min_value = float("inf")
+            chosen_child = None
             for child in self.input_graph[node]:
-                min_value = min(
-                    min_value, self.dfs(child, depth - 1, True, alpha, beta)
-                )
+                if child in self.leaf_nodes:
+                    score = self.dfs(
+                        self.leaf_nodes[child], True, alpha, beta
+                    )
+                else:
+                    score = self.dfs(child, True, alpha, beta)
+                if score < min_value:
+                    min_value = score
+                    chosen_child = child
 
                 if self.ab:
-                    beta = min(min_value, beta)
-                    if beta >= alpha:
-                        logging.info('beta pruning: {} for the node: {}'.format(min_value, node))
+                    beta = min(score, beta)
+                    if beta <= alpha:
                         break
+
+            if self.ab and beta > alpha:
+                logging.info(f" min({node}) chooses {chosen_child} for {min_value}")
+
+            if self.ab is False:
+                logging.info(f" min({node}) chooses {chosen_child} for {min_value}")
             return min_value
 
     def is_leaf(self, node):
-        # TODO: improve check for leaf. Loop over all chidlren of the given node to check if there's one integer.
-        #  That'll be a leaf.
-        for children in self.input_graph[node]:
-            if isinstance(children, int):
-                return True
-        return False
+        if node in self.leaf_nodes:
+            return isinstance(self.leaf_nodes[node], int)
+        return isinstance(node, int)
 
 
 if __name__ == "__main__":
@@ -149,4 +155,4 @@ if __name__ == "__main__":
     m.add_arguements()
     m.read_arguements()
     m.get_input_data()
-    m.start_minimax()
+    print(m.start_minimax())

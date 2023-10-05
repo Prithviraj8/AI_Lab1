@@ -1,11 +1,13 @@
-a: [a1, a2, a3]
-a1: [b, c]
-a3: [xy, yz, wx]
-a2: [b19, b29]
-b=-4
-c=3
-b19=0
-b29=-12
-xy: [yz, wx]
+# comments are ignored
+xy=-1
 wx=8
-yz=-4
+a: [a1, a2, a3]
+# there can be space before or after : [ , ]
+a1 : [b, c]
+a3: [ xy, wx]
+a2: [b19, b29 ]
+# node can be used above before it is given a defined value
+b=-4
+c = 3
+b19=5
+b29=2

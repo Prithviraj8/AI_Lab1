@@ -42,14 +42,14 @@ class ParseData(object):
         if not file_name:
             return return_data
         input_file = open(f"minimax/parse_data/{file_name}", "r")
-        print("\n--Reading Input text file --")
+        # print("\n--Reading Input text file --")
         count = 0
         for line in input_file:
             count += 1
             line_text = line.strip()
             if line_text.startswith("#"):
                 continue
-            print("Line{}: {}".format(count, line.strip()))
+            # print("Line{}: {}".format(count, line.strip()))
 
             if "=" in line_text:
                 components = line_text.split("=")

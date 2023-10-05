@@ -7,8 +7,10 @@ from parse_data.parse_data import ParseData
 
 class Minimax:
     def __init__(self):
+        self.root = None
         self.max = False
         self.ab = False
+        self.verbose = False
         self.range = []
         self.input_graph = {}
         self.tree_depth = 0
@@ -45,14 +47,15 @@ class Minimax:
     def get_input_data(self):
         parse_data = ParseData()
         input_data = parse_data.get_input_data("input_file")
-        print("input_data: ", input_data)
+
         self.input_graph = input_data["input_graph"]
         self.tree_depth = input_data["tree_depth"]
         self.leaf_nodes = input_data["leaf_nodes"]
 
     def read_arguements(self):
         args = self.add_arguements()
-        print('max: ', args.max, args.ab)
+        if '-v' in sys.argv:
+            self.verbose = True
         if args.range:
             self.range = [-args.range, args.range]
         self.ab = args.ab
@@ -64,7 +67,7 @@ class Minimax:
         root_data_obj = parse_data.get_root(self.input_graph)
         if root_data_obj["message"] is not None:
             return logging.info(root_data_obj["message"])
-        root = root_data_obj["root"]
+        self.root = root_data_obj["root"]
 
         nodes_data_obj = parse_data.check_node_failure(
             self.input_graph, self.leaf_nodes
@@ -79,7 +82,7 @@ class Minimax:
             logging.info(leaves_data_obj["message"])
 
         min_max_result = self.dfs(
-            node=root,
+            node=self.root,
             is_max_player=self.max,
             alpha=float("-inf"),
             beta=float("inf"),
@@ -117,6 +120,10 @@ class Minimax:
 
             if self.ab is False:
                 logging.info(f" max({node}) chooses {chosen_child} for {max_value}")
+
+            if node == self.root:
+                print(f"min({self.root}) chooses {chosen_child} for {max_value}")
+
             return max_value
         else:
             min_value = float("inf")
@@ -142,6 +149,9 @@ class Minimax:
 
             if self.ab is False:
                 logging.info(f" min({node}) chooses {chosen_child} for {min_value}")
+
+            if node == self.root:
+                print(f"min({self.root}) chooses {chosen_child} for {min_value}")
             return min_value
 
     def is_leaf(self, node):
@@ -155,4 +165,4 @@ if __name__ == "__main__":
     m.add_arguements()
     m.read_arguements()
     m.get_input_data()
-    print(m.start_minimax())
+    m.start_minimax()

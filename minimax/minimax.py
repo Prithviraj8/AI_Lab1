@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+from parse_data.exceptions import Messages, ExceptionHandling
 from parse_data.parse_data import ParseData
 
 
@@ -14,7 +15,6 @@ class Minimax:
         self.range = []
         self.filename = None
         self.input_graph = {}
-        self.tree_depth = 0
         self.leaf_nodes = {}
 
     def add_arguements(self):
@@ -56,7 +56,6 @@ class Minimax:
             return input_data
 
         self.input_graph = input_data["input_graph"]
-        self.tree_depth = input_data["tree_depth"]
         self.leaf_nodes = input_data["leaf_nodes"]
         return {}
 
@@ -84,7 +83,8 @@ class Minimax:
         parse_data = ParseData()
         root_data_obj = parse_data.get_root(self.input_graph)
         if root_data_obj["message"] is not None:
-            return logging.info(root_data_obj["message"])
+            logging.info(root_data_obj["message"])
+            return
         self.root = root_data_obj["root"]
 
         nodes_data_obj = parse_data.check_node_failure(
@@ -92,12 +92,14 @@ class Minimax:
         )
         if nodes_data_obj["message"] is not None:
             logging.info(nodes_data_obj["message"])
+            return
 
         leaves_data_obj = parse_data.check_leaf_failure(
             self.input_graph, self.leaf_nodes
         )
         if leaves_data_obj["message"] is not None:
             logging.info(leaves_data_obj["message"])
+            return
 
         min_max_result = self.dfs(
             node=self.root,

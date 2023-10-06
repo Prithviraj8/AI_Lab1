@@ -1,14 +1,7 @@
-import os
-
 from .exceptions import ExceptionHandling, Messages
 
 
 class ParseData(object):
-    def depth(self, node, graph):
-        if node not in graph or len(graph[node]) == 0:
-            return 1
-        child_depth = [self.depth(child, graph) for child in graph[node]]
-        return 1 + max(child_depth)
 
     def get_root(self, input_graph):
         exception_handling = ExceptionHandling()
@@ -39,10 +32,8 @@ class ParseData(object):
         input_graph = input_data["graph"]
         leaf_nodes = input_data["leaf_nodes"]
 
-        tree_depth = self.depth(list(input_graph.keys())[0], input_graph)
         return {
             "input_graph": input_graph,
-            "tree_depth": tree_depth,
             "leaf_nodes": leaf_nodes,
             "message": None
         }

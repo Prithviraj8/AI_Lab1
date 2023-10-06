@@ -4,7 +4,13 @@ from .exceptions import ExceptionHandling, Messages
 This file parses the input text file to create a dictionary which is used across the minimax python file to compute scores
 This file also handles some basic error exceptions for the parsed file.
 """
+
+
 class ParseData(object):
+    def has_cycle(self, input_graph, leaf_nodes):
+        exception_handling = ExceptionHandling()
+        cycle = exception_handling.has_cycle(input_graph, leaf_nodes)
+        return cycle
 
     def get_root(self, input_graph):
         exception_handling = ExceptionHandling()
@@ -26,32 +32,28 @@ class ParseData(object):
             "input_graph": None,
             "tree_depth": None,
             "leaf_nodes": None,
-            "message": None
+            "message": None,
         }
         input_data = self.create_input_graph(file_name)
-        if input_data['message'] is not None:
-            result['message'] = input_data['message']
+        if input_data["message"] is not None:
+            result["message"] = input_data["message"]
             return result
         input_graph = input_data["graph"]
         leaf_nodes = input_data["leaf_nodes"]
 
-        return {
-            "input_graph": input_graph,
-            "leaf_nodes": leaf_nodes,
-            "message": None
-        }
+        return {"input_graph": input_graph, "leaf_nodes": leaf_nodes, "message": None}
 
     def create_input_graph(self, file_name=""):
         leaf_nodes = {}
         graph = {}
-        return_data = {"graph": graph, "leaf_nodes": leaf_nodes, 'message': None}
+        return_data = {"graph": graph, "leaf_nodes": leaf_nodes, "message": None}
         if not file_name:
-            return_data['message'] = 'No filename provided'
+            return_data["message"] = "No filename provided"
             return return_data
         try:
             input_file = open(f"minimax/parse_data/{file_name}", "r")
         except Exception as e:
-            return_data['message'] = Messages.FILE_INPUT
+            return_data["message"] = Messages.FILE_INPUT
             return return_data
         # print("\n--Reading Input text file --")
         count = 0

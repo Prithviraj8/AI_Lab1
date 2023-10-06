@@ -12,6 +12,28 @@ This file has the logic to find out various exceptions and return the error mess
 
 
 class ExceptionHandling:
+    def check_cycle(self, input_graph, leaf_nodes, node, visited):
+        if node in leaf_nodes:
+            return False
+        if node in visited and visited[node] is True:
+            return True
+        visited[node] = True
+        ret = False
+
+        for child in input_graph[node]:
+            ret = self.check_cycle(input_graph, leaf_nodes, child, visited)
+            if ret:
+                break
+
+        visited[node] = False
+        return ret
+
+    def has_cycle(self, input_graph, leaf_nodes):
+        visited = {}
+        for parent, children in input_graph.items():
+            if self.check_cycle(input_graph, leaf_nodes, parent, visited):
+                return True
+        return False
 
     def root_failure(self, input_graph):
         result = {"root": None, "message": None}

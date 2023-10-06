@@ -2,7 +2,7 @@
 # Pre-requisites ?
 1. Install python version 3 and above. Preferably 3.9.18
 2. Use `pip install -r requirements.txt` to install the python version from the requirements file.
-3. Add a .txt file under minimax/parse_data similar to the one that already exists: <b>input_file.txt and input_file2.txt </b>.
+3. Add a .txt file of any name under minimax/parse_data similar to the one that already exists: <b>input_file.txt and input_file2.txt </b>.
     This input file contains the input data on which the minimax algorithm executes
     <br>The file from which the input data has to be parsed must have a '.txt' extension in the filename as well.
 4. And, that's it. You're set to use this minimax algorithm. Enjoy!

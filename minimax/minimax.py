@@ -87,24 +87,24 @@ class Minimax:
         if root_data_obj["message"] is not None:
             print(root_data_obj["message"])
             return
+
         self.root = root_data_obj["root"]
-
-        if parse_data.has_cycle(self.input_graph, self.leaf_nodes):
-            print("Graph has cycle")
-            return
-
         nodes_data_obj = parse_data.check_node_failure(
             self.input_graph, self.leaf_nodes
         )
         if nodes_data_obj["message"] is not None:
-            logging.info(nodes_data_obj["message"])
+            print(nodes_data_obj["message"])
             return
 
         leaves_data_obj = parse_data.check_leaf_failure(
             self.input_graph, self.leaf_nodes
         )
         if leaves_data_obj["message"] is not None:
-            logging.info(leaves_data_obj["message"])
+            print(leaves_data_obj["message"])
+            return
+
+        if parse_data.has_cycle(self.input_graph, self.leaf_nodes):
+            print("Graph has cycle")
             return
 
         min_max_result = self.dfs(

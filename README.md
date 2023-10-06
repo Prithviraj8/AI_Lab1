@@ -22,6 +22,6 @@
 7. `python minimax/minimax.py -v -ab -range 10 min input_file.txt`
 8. `python minimax/minimax.py -v -ab -range 10 max input_file.txt`
     
-   
+
 ### Note:
 Discussed possible techniques and methods with Varun Tirthani

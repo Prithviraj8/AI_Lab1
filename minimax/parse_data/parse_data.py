@@ -1,6 +1,9 @@
 from .exceptions import ExceptionHandling, Messages
 
-
+"""
+This file parses the input text file to create a dictionary which is used across the minimax python file to compute scores
+This file also handles some basic error exceptions for the parsed file.
+"""
 class ParseData(object):
 
     def get_root(self, input_graph):

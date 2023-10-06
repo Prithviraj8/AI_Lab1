@@ -5,6 +5,9 @@ class Messages:
     VALID_ROOD = "valid_rood"
     FILE_INPUT = "Only .txt file inputs are allowed"
 
+"""
+This file has the logic to find out various exceptions and return the error messages
+"""
 
 class ExceptionHandling:
 

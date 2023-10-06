@@ -2,10 +2,11 @@ import argparse
 import logging
 import sys
 
-from parse_data.exceptions import Messages, ExceptionHandling
 from parse_data.parse_data import ParseData
 
-
+"""
+This file computes the score of players based on the selection of min/max at each level
+"""
 class Minimax:
     def __init__(self):
         self.root = None

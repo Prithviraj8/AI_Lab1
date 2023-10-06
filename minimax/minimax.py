@@ -12,6 +12,7 @@ class Minimax:
         self.ab = False
         self.verbose = False
         self.range = []
+        self.filename = None
         self.input_graph = {}
         self.tree_depth = 0
         self.leaf_nodes = {}
@@ -40,17 +41,24 @@ class Minimax:
         )
         parser.add_argument("-range", help="Range of values for nodes", type=int)
         parser.add_argument("max", help="Max for the root node")
+        parser.add_argument(
+            "filename",
+            help="Name of the input text file in the current directory"
+        )
         args = parser.parse_args()
         logging.basicConfig(level=args.loglevel)
         return args
 
-    def get_input_data(self):
+    def assign_input_data(self):
         parse_data = ParseData()
-        input_data = parse_data.get_input_data("input_file")
+        input_data = parse_data.get_input_data(self.filename)
+        if input_data['message'] is not None:
+            return input_data
 
         self.input_graph = input_data["input_graph"]
         self.tree_depth = input_data["tree_depth"]
         self.leaf_nodes = input_data["leaf_nodes"]
+        return {}
 
     def read_arguements(self):
         args = self.add_arguements()
@@ -61,8 +69,18 @@ class Minimax:
         self.ab = args.ab
         if args.max == 'max':
             self.max = True
+        if args.filename:
+            if '.txt' in args.filename:
+                self.filename = args.filename
 
     def start_minimax(self):
+        m.add_arguements()
+        m.read_arguements()
+        input_data = m.assign_input_data()
+        if input_data.get('message') is not None:
+            print(input_data['message'])
+            return
+
         parse_data = ParseData()
         root_data_obj = parse_data.get_root(self.input_graph)
         if root_data_obj["message"] is not None:
@@ -121,8 +139,8 @@ class Minimax:
             if self.ab is False:
                 logging.info(f" max({node}) chooses {chosen_child} for {max_value}")
 
-            if node == self.root:
-                print(f"min({self.root}) chooses {chosen_child} for {max_value}")
+            if node == self.root and self.verbose is False:
+                print(f"max({self.root}) chooses {chosen_child} for {max_value}")
 
             return max_value
         else:
@@ -150,7 +168,7 @@ class Minimax:
             if self.ab is False:
                 logging.info(f" min({node}) chooses {chosen_child} for {min_value}")
 
-            if node == self.root:
+            if node == self.root and self.verbose is False:
                 print(f"min({self.root}) chooses {chosen_child} for {min_value}")
             return min_value
 
@@ -162,7 +180,4 @@ class Minimax:
 
 if __name__ == "__main__":
     m = Minimax()
-    m.add_arguements()
-    m.read_arguements()
-    m.get_input_data()
     m.start_minimax()

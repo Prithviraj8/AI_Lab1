@@ -1,4 +1,6 @@
-from .exceptions import ExceptionHandling
+import os
+
+from .exceptions import ExceptionHandling, Messages
 
 
 class ParseData(object):
@@ -24,7 +26,16 @@ class ParseData(object):
         return leaf_data_obj
 
     def get_input_data(self, file_name=""):
+        result = {
+            "input_graph": None,
+            "tree_depth": None,
+            "leaf_nodes": None,
+            "message": None
+        }
         input_data = self.create_input_graph(file_name)
+        if input_data['message'] is not None:
+            result['message'] = input_data['message']
+            return result
         input_graph = input_data["graph"]
         leaf_nodes = input_data["leaf_nodes"]
 
@@ -33,15 +44,21 @@ class ParseData(object):
             "input_graph": input_graph,
             "tree_depth": tree_depth,
             "leaf_nodes": leaf_nodes,
+            "message": None
         }
 
     def create_input_graph(self, file_name=""):
         leaf_nodes = {}
         graph = {}
-        return_data = {"graph": graph, "leaf_nodes": leaf_nodes}
+        return_data = {"graph": graph, "leaf_nodes": leaf_nodes, 'message': None}
         if not file_name:
+            return_data['message'] = 'No filename provided'
             return return_data
-        input_file = open(f"minimax/parse_data/{file_name}", "r")
+        try:
+            input_file = open(f"minimax/parse_data/{file_name}", "r")
+        except Exception as e:
+            return_data['message'] = Messages.FILE_INPUT
+            return return_data
         # print("\n--Reading Input text file --")
         count = 0
         for line in input_file:
@@ -68,10 +85,11 @@ class ParseData(object):
                         graph[node] = []
                     graph[node].append(ch)
         print("\n")
-        return_data = {"graph": graph, "leaf_nodes": leaf_nodes}
+        return_data["graph"] = graph
+        return_data["leaf_nodes"] = leaf_nodes
         return return_data
 
 
 if __name__ == "__main__":
     p = ParseData()
-    p.create_input_graph("input_file")
+    p.create_input_graph("input_file.txt")

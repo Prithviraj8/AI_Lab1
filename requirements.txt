@@ -1,3 +1,1 @@
-numpy
-pandas
-pytz
+python==3.9.18

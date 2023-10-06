@@ -110,7 +110,7 @@ class Minimax:
     def dfs(self, node, is_max_player, alpha, beta):
         if self.is_leaf(node):
             if self.range and (node < self.range[0] or node > self.range[1]):
-                return float('-inf') if is_max_player else float('inf')
+                return float('-inf')
             return node
 
         if is_max_player:

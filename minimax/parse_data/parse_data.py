@@ -1,3 +1,5 @@
+import os
+
 from .exceptions import ExceptionHandling, Messages
 
 
@@ -30,15 +32,10 @@ class ParseData(object):
             "leaf_nodes": None,
             "message": None
         }
-        try:
-            file_name = file_name.split('.txt')[0]
-        except Exception as e:
-            result['message'] = Messages.FILE_INPUT
-            return result
-
         input_data = self.create_input_graph(file_name)
         if input_data['message'] is not None:
-            return input_data
+            result['message'] = input_data['message']
+            return result
         input_graph = input_data["graph"]
         leaf_nodes = input_data["leaf_nodes"]
 
@@ -55,12 +52,12 @@ class ParseData(object):
         graph = {}
         return_data = {"graph": graph, "leaf_nodes": leaf_nodes, 'message': None}
         if not file_name:
+            return_data['message'] = 'No filename provided'
             return return_data
         try:
             input_file = open(f"minimax/parse_data/{file_name}", "r")
         except Exception as e:
-            return_data['message'] = str(e)
-            print('no valid file: ', file_name)
+            return_data['message'] = Messages.FILE_INPUT
             return return_data
         # print("\n--Reading Input text file --")
         count = 0
@@ -95,4 +92,4 @@ class ParseData(object):
 
 if __name__ == "__main__":
     p = ParseData()
-    p.create_input_graph("input_file")
+    p.create_input_graph("input_file.txt")

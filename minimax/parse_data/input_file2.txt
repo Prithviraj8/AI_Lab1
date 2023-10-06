@@ -1,0 +1,13 @@
+# comments are ignored
+xy=-1
+wx=8
+a: [a1, a2, a3]
+# there can be space before or after : [ , ]
+a1 : [b, c]
+a3: [ xy, wx]
+a2: [b19, b29 ]
+# node can be used above before it is given a defined value
+b=-100
+c = 32
+b19=555
+b29=222

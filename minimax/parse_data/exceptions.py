@@ -3,9 +3,11 @@ class Messages:
     NODE_NOT_FOUND = "node_not_found"
     LEAF_FAILURE = "leaf failure"
     VALID_ROOD = "valid_rood"
+    FILE_INPUT = "Only .txt file inputs are allowed"
 
 
 class ExceptionHandling:
+
     def root_failure(self, input_graph):
         result = {"root": None, "message": None}
         visited = set()

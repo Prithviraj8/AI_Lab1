@@ -7,6 +7,8 @@ from parse_data.parse_data import ParseData
 """
 This file computes the score of players based on the selection of min/max at each level
 """
+
+
 class Minimax:
     def __init__(self):
         self.root = None
@@ -43,8 +45,7 @@ class Minimax:
         parser.add_argument("-range", help="Range of values for nodes", type=int)
         parser.add_argument("max", help="Max for the root node")
         parser.add_argument(
-            "filename",
-            help="Name of the input text file in the current directory"
+            "filename", help="Name of the input text file in the current directory"
         )
         args = parser.parse_args()
         logging.basicConfig(level=args.loglevel)
@@ -53,7 +54,7 @@ class Minimax:
     def assign_input_data(self):
         parse_data = ParseData()
         input_data = parse_data.get_input_data(self.filename)
-        if input_data['message'] is not None:
+        if input_data["message"] is not None:
             return input_data
 
         self.input_graph = input_data["input_graph"]
@@ -62,31 +63,35 @@ class Minimax:
 
     def read_arguements(self):
         args = self.add_arguements()
-        if '-v' in sys.argv:
+        if "-v" in sys.argv:
             self.verbose = True
         if args.range:
             self.range = [-args.range, args.range]
         self.ab = args.ab
-        if args.max == 'max':
+        if args.max == "max":
             self.max = True
         if args.filename:
-            if '.txt' in args.filename:
+            if ".txt" in args.filename:
                 self.filename = args.filename
 
     def start_minimax(self):
         m.add_arguements()
         m.read_arguements()
         input_data = m.assign_input_data()
-        if input_data.get('message') is not None:
-            print(input_data['message'])
+        if input_data.get("message") is not None:
+            print(input_data["message"])
             return
 
         parse_data = ParseData()
         root_data_obj = parse_data.get_root(self.input_graph)
         if root_data_obj["message"] is not None:
-            logging.info(root_data_obj["message"])
+            print(root_data_obj["message"])
             return
         self.root = root_data_obj["root"]
+
+        if parse_data.has_cycle(self.input_graph, self.leaf_nodes):
+            print("Graph has cycle")
+            return
 
         nodes_data_obj = parse_data.check_node_failure(
             self.input_graph, self.leaf_nodes
@@ -113,7 +118,7 @@ class Minimax:
     def dfs(self, node, is_max_player, alpha, beta):
         if self.is_leaf(node):
             if self.range and (node < self.range[0] or node > self.range[1]):
-                return float('-inf')
+                return float("-inf")
             return node
 
         if is_max_player:
@@ -122,9 +127,7 @@ class Minimax:
 
             for child in self.input_graph[node]:
                 if child in self.leaf_nodes:
-                    score = self.dfs(
-                        self.leaf_nodes[child], False, alpha, beta
-                    )
+                    score = self.dfs(self.leaf_nodes[child], False, alpha, beta)
                 else:
                     score = self.dfs(child, False, alpha, beta)
                 if score > max_value:
@@ -151,9 +154,7 @@ class Minimax:
             chosen_child = None
             for child in self.input_graph[node]:
                 if child in self.leaf_nodes:
-                    score = self.dfs(
-                        self.leaf_nodes[child], True, alpha, beta
-                    )
+                    score = self.dfs(self.leaf_nodes[child], True, alpha, beta)
                 else:
                     score = self.dfs(child, True, alpha, beta)
                 if score < min_value:

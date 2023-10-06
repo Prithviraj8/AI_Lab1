@@ -24,4 +24,6 @@
     
 
 ### Note:
-Discussed possible techniques and methods with Varun Tirthani
+Discussed possible techniques with Varun Tirthani.
+All the code work is entirely my own.
+

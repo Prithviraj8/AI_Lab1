@@ -48,13 +48,17 @@ class ParseData(object):
         graph = {}
         return_data = {"graph": graph, "leaf_nodes": leaf_nodes, "message": None}
         if not file_name:
-            return_data["message"] = "No filename provided"
+            return_data["message"] = "Provide a filename to read input data from."
             return return_data
+
         try:
+            if file_name and ".txt" not in file_name:
+                raise Exception(Messages.FILE_INPUT)
             input_file = open(f"minimax/parse_data/{file_name}", "r")
         except Exception as e:
-            return_data["message"] = Messages.FILE_INPUT
+            return_data["message"] = str(e)
             return return_data
+
         # print("\n--Reading Input text file --")
         count = 0
         for line in input_file:

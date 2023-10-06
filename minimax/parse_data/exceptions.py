@@ -3,7 +3,7 @@ class Messages:
     NODE_NOT_FOUND = "node_not_found"
     LEAF_FAILURE = "leaf failure"
     VALID_ROOD = "valid_rood"
-    FILE_INPUT = "Only .txt file inputs are allowed"
+    FILE_INPUT = "Filenames must end with (.txt) and must be of extension type (.txt)"
 
 
 """

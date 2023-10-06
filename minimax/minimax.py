@@ -45,7 +45,9 @@ class Minimax:
         parser.add_argument("-range", help="Range of values for nodes", type=int)
         parser.add_argument("max", help="Max for the root node")
         parser.add_argument(
-            "filename", help="Name of the input text file in the current directory"
+            "filename",
+            help="Name of the input text file in the current directory",
+            nargs="?",
         )
         args = parser.parse_args()
         logging.basicConfig(level=args.loglevel)
@@ -70,9 +72,13 @@ class Minimax:
         self.ab = args.ab
         if args.max == "max":
             self.max = True
+        if not args.filename:
+            print("Error: Please provide the filename.")
+            sys.exit(1)
         if args.filename:
-            if ".txt" in args.filename:
-                self.filename = args.filename
+            self.filename = args.filename
+        else:
+            self.filename = "Filename"
 
     def start_minimax(self):
         m.add_arguements()
